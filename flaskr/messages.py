@@ -42,9 +42,9 @@ def create():
                 (title, body, g.user['id'])
             )
             db.commit()
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('messages.splash'))
 
-    return render_template('blog/create.html')
+    return render_template('messages/create.html')
 
 def get_messages(id, check_author=True):
     messages = get_db().execute(
