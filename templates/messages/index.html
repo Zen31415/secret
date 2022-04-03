@@ -1,28 +1,5 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Messages{% endblock %}</h1>
-  {% if g.user %}
-    <a class="action" href="{{ url_for('messages.create') }}">New</a>
-  {% endif %}
-{% endblock %}
-
-{% block content %}
-  {% for messages in messages %}
-    <article class="messages">
-      <header>
-        <div>
-          <h1>{{ messages['title'] }}</h1>
-          <div class="about">by {{ messages['username'] }} on {{ messages['created'].strftime('%Y-%m-%d') }}</div>
-        </div>
-<!--        {% if g.user['id'] == messages['owner_id'] %}
-          <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
-        {% endif %} -->
-      </header>
-      <p class="body">{{ messages['body'] }}</p>
-    </article>
-    {% if not loop.last %}
-      <hr>
-    {% endif %}
-  {% endfor %}
+  <h1>{% block title %}Log in for access.{% endblock %}</h1>
 {% endblock %}

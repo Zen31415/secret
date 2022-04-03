@@ -21,6 +21,7 @@ def index():
     return render_template('messages/index.html', messages=messages)
 
 @bp.route('/splash')
+@login_required
 def splash():
     db = get_db()
     posts = db.execute(
