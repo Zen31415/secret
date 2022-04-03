@@ -15,7 +15,7 @@
           <h1>{{ messages['title'] }}</h1>
           <div class="about">by {{ messages['username'] }} on {{ messages['created'].strftime('%Y-%m-%d') }}</div>
         </div>
-<!--        {% if g.user['id'] == messages['author_id'] %}
+<!--        {% if g.user['id'] == messages['owner_id'] %}
           <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
         {% endif %}-->
       </header>

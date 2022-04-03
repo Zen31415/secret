@@ -14,8 +14,8 @@ bp = Blueprint('messages', __name__)
 def index():
 #    db = get_db()
 #    posts = db.execute(
-#        'SELECT p.id, title, body, created, author_id, username'
-#        ' FROM messages p JOIN user u ON p.author_id = u.id'
+#        'SELECT p.id, title, body, created, owner_id, username'
+#        ' FROM messages p JOIN user u ON p.owner_id = u.id'
 #        ' ORDER BY created DESC'
 #    ).fetchall()
     return render_template('messages/index.html', messages=messages)
@@ -24,8 +24,8 @@ def index():
 def splash():
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM messages p JOIN user u ON p.author_id = u.id'
+        'SELECT p.id, title, body, created, owner_id, username'
+        ' FROM messages p JOIN user u ON p.owner_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
     return render_template('messages/splash.html', messages=messages)
@@ -58,7 +58,7 @@ def create():
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO messages (title, body, author_id)'
+                'INSERT INTO messages (title, body, owner_id)'
                 ' VALUES (?, ?, ?)',
                 (title, body, g.user['id'])
             )
@@ -69,8 +69,8 @@ def create():
 
 def get_messages(id, check_author=True):
     messages = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM messages p JOIN user u ON p.author_id = u.id'
+        'SELECT p.id, title, body, created, owner_id, username'
+        ' FROM messages p JOIN user u ON p.owner_id = u.id'
         ' WHERE p.id = ?',
         (id,)
     ).fetchone()
@@ -78,7 +78,7 @@ def get_messages(id, check_author=True):
     if messages is None:
         abort(404, f"Message id {id} doesn't exist.")
 
-    if check_author and messages['author_id'] != g.user['id']:
+    if check_author and messages['owner_id'] != g.user['id']:
         abort(403)
 
     return messages
