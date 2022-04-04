@@ -12,14 +12,7 @@ bp = Blueprint('steno', __name__)
 
 @bp.route('/')
 def index():
-    """Show all the posts, most recent first."""
-#    db = get_db()
-#    steno = db.execute(
-#        'SELECT p.id, title, body, created, owner_id, username'
-#        ' FROM steno p JOIN user u ON p.owner_id = u.id'
-#        ' ORDER BY created DESC'
-#    ).fetchall()
-    return render_template('steno/index.html', steno=steno)
+    return render_template('steno/index.html')
 
 @bp.route('/splash')
 @login_required
@@ -33,21 +26,20 @@ def splash():
     return render_template('steno/splash.html', steno=steno)
 
 
-#@bp.route('/steno')
-#def steno():
-##    return 'testing'
-#    db = get_db()
-#    steno = db.execute(
-#        'SELECT p.id, owner_id, created, username, title, body, otp, read_time'
-#        ' FROM steno p JOIN user u ON p.owner_id = u.id'
-#        ' ORDER BY created DESC'
-#    ).fetchall()
-#    return render_template('steno/messages.html', steno=steno)
+@bp.route('/messages')
+def messages():
+    db = get_db()
+    steno = db.execute(
+        'SELECT p.id, owner_id, created, username, title, body, otp, read_time'
+        ' FROM steno p JOIN user u ON p.owner_id = u.id'
+        ' ORDER BY created DESC'
+    ).fetchall()
+    return render_template('steno/messages.html', steno=steno)
 
-@bp.route('/create', methods=('GET', 'STENO'))
+@bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
-    if request.method == 'STENO':
+    if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
         error = None
