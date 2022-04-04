@@ -12,12 +12,6 @@ bp = Blueprint('messages', __name__)
 
 @bp.route('/')
 def index():
-#    db = get_db()
-#    posts = db.execute(
-#        'SELECT p.id, title, body, created, owner_id, username'
-#        ' FROM messages p JOIN user u ON p.owner_id = u.id'
-#        ' ORDER BY created DESC'
-#    ).fetchall()
     return render_template('messages/index.html', messages=messages)
 
 @bp.route('/splash')
