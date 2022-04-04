@@ -16,7 +16,8 @@
             "args": [
             ],
             "jinja": true,
-            "justMyCode": true
+            "justMyCode": true,
+            "python.terminal.activateEnvironment": true
         }
     ]
 }
