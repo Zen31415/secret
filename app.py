@@ -3,8 +3,7 @@ from flask import request
 from flask import g
 import os
 from flaskr.auth import bp as auth_bp
-from flaskr.blog import bp as blog_bp
-from flaskr.messages import bp as messages
+from flaskr.steno import bp as steno
 from flaskr.db import init_db_command
 from flaskr.db import init_app
 
@@ -15,8 +14,7 @@ application.config.from_mapping(
 )
 init_app(application)
 application.register_blueprint(auth_bp)
-application.register_blueprint(blog_bp)
-application.register_blueprint(messages)
+application.register_blueprint(steno)
 
 @application.errorhandler(404)
 def not_found(error):
