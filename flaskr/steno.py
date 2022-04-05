@@ -1,5 +1,5 @@
 from crypt import methods
-import functools
+import functools, random, string
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
@@ -13,8 +13,13 @@ bp = Blueprint('steno', __name__)
 
 @bp.route('/')
 def index():
-    """Index page for users who are not logged in."""
-    return render_template('steno/index.html')
+    """Index page for users who are not logged in.
+    Checks if user is logged in, and if yes redirects to splash.
+    """
+    if not session.get('user_id') is None:
+        return render_template('steno/splash.html')
+    else:
+        return render_template('steno/index.html')
 
 @bp.route('/splash')
 @login_required
@@ -31,7 +36,9 @@ def splash():
 @login_required
 def create():
     """Create a new post for the current user."""
+    otp = None
     if request.method == 'POST':
+        otp = generate_otp(otp)
         title = request.form['title']
         body = request.form['body']
         error = None
@@ -44,14 +51,17 @@ def create():
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
+                'INSERT INTO post (title, body, author_id, otp)'
+                ' VALUES (?, ?, ?, ?)',
+                (title, body, g.user['id'], otp)
             )
             db.commit()
-            return redirect(url_for('steno.index'))
+            return redirect(url_for('steno.splash'))
 
     return render_template('steno/create.html')
+
+def generate_otp(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
 
 def get_post(id, check_author=True):
     """Get a post and its author by id.
@@ -66,7 +76,7 @@ def get_post(id, check_author=True):
     post = (
         get_db()
         .execute(
-            "SELECT p.id, title, body, created, author_id, username"
+            "SELECT p.id, title, body, created, author_id, username, otp"
             " FROM post p JOIN user u ON p.author_id = u.id"
             " WHERE p.id = ?",
             (id,),
@@ -92,7 +102,7 @@ def view(id):
 def splash():
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username, otp'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
