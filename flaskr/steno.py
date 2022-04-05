@@ -26,7 +26,7 @@ def index():
 def splash():
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username, otp'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
@@ -56,7 +56,7 @@ def create():
                 (title, body, g.user['id'], otp)
             )
             db.commit()
-            return redirect(url_for('steno.splash'))
+            return render_template('steno.splash')
 
     return render_template('steno/create.html')
 
