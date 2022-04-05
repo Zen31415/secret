@@ -26,16 +26,6 @@ def splash():
     return render_template('steno/splash.html', steno=steno)
 
 
-@bp.route('/messages')
-def messages():
-    db = get_db()
-    steno = db.execute(
-        'SELECT p.id, owner_id, created, username, title, body, otp, read_time'
-        ' FROM steno p JOIN user u ON p.owner_id = u.id'
-        ' ORDER BY created DESC'
-    ).fetchall()
-    return render_template('steno/messages.html', steno=steno)
-
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
