@@ -78,7 +78,7 @@ def get_post(otp, check_author=True):
         .execute(
             "SELECT p.id, title, body, created, author_id, username, otp"
             " FROM post p JOIN user u ON p.author_id = u.id"
-            " WHERE p.id = ?",
+            " WHERE otp = ?",
             (otp,),
         )
         .fetchone()
