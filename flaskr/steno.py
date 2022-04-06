@@ -26,7 +26,7 @@ def index():
 def splash():
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username, otp'
+        'SELECT p.title, body, created, author_id, username, otp'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
@@ -61,7 +61,7 @@ def create():
     return render_template('steno/create.html')
 
 def generate_otp(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
+    return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
 def get_post(otp, check_author=True):
     """Get a post and its author by otp.
@@ -76,7 +76,7 @@ def get_post(otp, check_author=True):
     post = (
         get_db()
         .execute(
-            "SELECT p.id, title, body, created, author_id, username, otp"
+            "SELECT p.title, body, created, author_id, username, otp"
             " FROM post p JOIN user u ON p.author_id = u.id"
             " WHERE otp = ?",
             (otp,),
@@ -102,7 +102,7 @@ def view(otp):
 def splash():
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username, otp'
+        'SELECT p.title, body, created, author_id, username, otp'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
