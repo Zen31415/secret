@@ -26,7 +26,7 @@ def index():
 def splash():
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username, otp'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
@@ -63,11 +63,11 @@ def create():
 def generate_otp(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
 
-def get_post(id, check_author=True):
-    """Get a post and its author by id.
-    Checks that the id exists and optionally that the current user is
+def get_post(otp, check_author=True):
+    """Get a post and its author by otp.
+    Checks that the otp exists and optionally that the current user is
     the author.
-    :param id: id of post to get
+    :param otp: otp of post to get
     :param check_author: require the current user to be the author
     :return: the post with author information
     :raise 404: if a post with the given id doesn't exist
@@ -79,24 +79,24 @@ def get_post(id, check_author=True):
             "SELECT p.id, title, body, created, author_id, username, otp"
             " FROM post p JOIN user u ON p.author_id = u.id"
             " WHERE p.id = ?",
-            (id,),
+            (otp,),
         )
         .fetchone()
     )
 
     if post is None:
-        abort(404, f"Post id {id} doesn't exist.")
+        abort(404, f"Post id {otp} doesn't exist.")
 
     if check_author and post["author_id"] != g.user["id"]:
         abort(403)
 
     return post
 
-@bp.route("/<int:id>/view")
+@bp.route("/<string:otp>/view")
 @login_required
-def view(id):
+def view(otp):
     """View a single post."""
-    post = get_post(id)
+    post = get_post(otp)
     return render_template('steno/view.html', post=post)
 
 def splash():
@@ -108,11 +108,11 @@ def splash():
     ).fetchall()
     return render_template('steno/splash.html', posts=posts)
 
-@bp.route("/<int:id>/update", methods=("GET", "POST"))
+@bp.route("/<string:otp>/update", methods=("GET", "POST"))
 @login_required
-def update(id):
+def update(otp):
     """Update a post if the current user is the author."""
-    post = get_post(id)
+    post = get_post(otp)
 
     if request.method == "POST":
         title = request.form["title"]
@@ -134,15 +134,15 @@ def update(id):
 
     return render_template("steno/update.html", post=post)
 
-@bp.route("/<int:id>/delete", methods=("POST",))
+@bp.route("/<string:otp>/delete", methods=("POST",))
 @login_required
-def delete(id):
+def delete(otp):
     """Delete a post.
     Ensures that the post exists and that the logged in user is the
     author of the post.
     """
-    get_post(id)
+    get_post(otp)
     db = get_db()
-    db.execute("DELETE FROM post WHERE id = ?", (id,))
+    db.execute("DELETE FROM post WHERE otp = ?", (otp,))
     db.commit()
     return redirect(url_for("steno.splash"))
