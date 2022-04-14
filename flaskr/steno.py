@@ -2,7 +2,7 @@ from crypt import methods
 import functools, random, string
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, abort
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -98,15 +98,6 @@ def view(otp):
     """View a single post."""
     post = get_post(otp)
     return render_template('steno/view.html', post=post)
-
-def splash():
-    db = get_db()
-    posts = db.execute(
-        'SELECT p.title, body, created, author_id, username, otp'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' ORDER BY created DESC'
-    ).fetchall()
-    return render_template('steno/splash.html', posts=posts)
 
 @bp.route("/<string:otp>/update", methods=("GET", "POST"))
 @login_required
