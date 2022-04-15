@@ -8,6 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
 from flaskr.auth import login, login_required
+from datetime import datetime
 
 bp = Blueprint('steno', __name__)
 
@@ -26,7 +27,7 @@ def index():
 def splash():
     db = get_db()
     posts = db.execute(
-        'SELECT p.title, body, created, author_id, username, otp'
+        'SELECT p.title, body, created, author_id, username, otp, readtime'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
@@ -36,7 +37,7 @@ def splash():
 @login_required
 def create():
     """Create a new post for the current user."""
-    otp = None
+    otp = 8
     if request.method == 'POST':
         otp = generate_otp(otp)
         title = request.form['title']
@@ -60,23 +61,28 @@ def create():
 
     return render_template('steno/create.html')
 
-def generate_otp(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
+def generate_otp(length):
+    pool = string.ascii_letters + string.digits
+    return ''.join(random.choice(pool) for i in range(length))
+
+def updatereadtime(otp):
+    """Whenever a message is read, we update its readtime."""
+    readtime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    db = get_db()
+    db.execute(
+        "UPDATE post SET readtime = ? WHERE otp = ?", (readtime, otp)
+    )
+    db.commit()
+    return(otp)
+
 
 def get_post(otp, check_author=True):
-    """Get a post and its author by otp.
-    Checks that the otp exists and optionally that the current user is
-    the author.
-    :param otp: otp of post to get
-    :param check_author: require the current user to be the author
-    :return: the post with author information
-    :raise 404: if a post with the given id doesn't exist
-    :raise 403: if the current user isn't the author
-    """
+    """Get a post from its identifying otp value."""
+    updatereadtime(otp)
     post = (
         get_db()
         .execute(
-            "SELECT p.title, body, created, author_id, username, otp"
+            "SELECT p.title, body, created, author_id, username, otp, readtime"
             " FROM post p JOIN user u ON p.author_id = u.id"
             " WHERE otp = ?",
             (otp,),
