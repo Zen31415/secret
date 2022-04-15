@@ -8,6 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
 from flaskr.auth import login, login_required
+from datetime import datetime
 
 bp = Blueprint('steno', __name__)
 
@@ -56,7 +57,7 @@ def create():
                 (title, body, g.user['id'], otp)
             )
             db.commit()
-            return redirect(url_for('steno.splash'))
+            return render_template('steno.splash')
 
     return render_template('steno/create.html')
 
