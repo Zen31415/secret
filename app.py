@@ -1,7 +1,6 @@
-from flask import Flask
-from flask import request
-from flask import g
+"""."""
 import os
+from flask import Flask, request, g
 from flaskr.auth import bp as auth_bp
 from flaskr.steno import bp as steno
 from flaskr.db import init_db_command
