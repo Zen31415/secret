@@ -1,0 +1,1 @@
+This folder is required for the database to be created within.
