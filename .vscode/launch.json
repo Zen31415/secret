@@ -5,21 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
             "name": "Python: Flask",
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/app.py",
             "env": {
                 "FLASK_APP": "app.py",
-                "FLASK_ENV": "development"
+                "FLASK_DEBUG": "1",
             },
             "args": [],
             "jinja": true,
