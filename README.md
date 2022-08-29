@@ -1,7 +1,8 @@
 # secret
 Flask web app for sending secure messages.
 
-Install notes for myself:
+## Bootstrapping
+```
 cd to project folder
 sudo apt install python3-pip sqlite3
 python3 -m venv venv
@@ -21,3 +22,4 @@ git clone <url>
 git status
 git commit
 git push -u origin main
+```

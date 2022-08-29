@@ -57,7 +57,7 @@ def create():
                 (title, body, g.user['id'], otp)
             )
             db.commit()
-            return render_template('steno.splash')
+            return render_template('steno/splash.html')
 
     return render_template('steno/create.html')
 
