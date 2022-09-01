@@ -4,7 +4,7 @@ Flask web app for sending secure messages.
 ## Bootstrapping
 ```
 cd to project folder
-sudo apt install python3-pip sqlite3
+sudo apt install python3-pip sqlite3 python3.10-venv
 python3 -m venv venv
 . venv/bin/activate
 pip install flask
