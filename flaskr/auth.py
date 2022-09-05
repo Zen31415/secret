@@ -1,11 +1,9 @@
 import functools
-
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-
-from flaskr.db import get_db
+from flaskr.db import get_db, UserModel, session
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -24,11 +22,17 @@ def register():
 
         if error is None:
             try:
-                db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                user = UserModel(
+                username=request.form['username'],
+                password=generate_password_hash(request.form['password'])
                 )
-                db.commit()
+                session.add(user)
+                session.commit
+                # db.execute(
+                #     "INSERT INTO user (username, password) VALUES (?, ?)",
+                #     (username, generate_password_hash(password)),
+                # )
+                # db.commit()
             except db.IntegrityError:
                 error = f"User {username} is already registered."
             else:
