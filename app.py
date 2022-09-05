@@ -11,12 +11,14 @@ from flask_migrate import Migrate
 application = Flask(__name__, static_folder='static', template_folder='templates')
 application.config.from_mapping(
     SECRET_KEY='dev',
-    DATABASE=os.path.join(application.instance_path, 'flaskr.sqlite'),
-    SQLALCHEMY_DATABASE_URI="postgresql://postgres:postgres@localhost:5432/secret"
+#    DATABASE=os.path.join(application.instance_path, 'flaskr.sqlite'),
+    SQLALCHEMY_DATABASE_URI="postgresql://postgres:postgres@localhost:5432/secret",
+    SQLALCHEMY_TRACK_MODIFICATIONS=False
+    #db = SQLAlchemy(application)
 )
 init_app(application)
 db = SQLAlchemy(application)
-migrate = Migrate(application, db)
+#migrate = Migrate(application, db)
 application.register_blueprint(auth_bp)
 application.register_blueprint(steno)
 
