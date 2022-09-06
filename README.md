@@ -15,7 +15,7 @@ FLASK_APP=app.py FLASK_DEBUG=development python app.py
 
 once the project is installable: pip install -e .
 
-docker-compose up
+sudo docker-compose up
 flask --app flaskr init-db ## (or just flask init-db)
 flask --app flaskr --debug run
 

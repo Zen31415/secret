@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 
 engine = create_engine(
-    'postgresql://postgres:postgres@localhost:5432/cars_api',
+    'postgresql://postgres:postgres@localhost:5432/secret',
     echo=True
 )
 Session = sessionmaker(bind=engine)
