@@ -5,7 +5,9 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.db import UserModel
 from flask import session
+from flaskr.db import session as db_session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import SQLAlchemyError
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -19,31 +21,29 @@ def register():
         error = None
 
         if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
+            flash('Username is required.')
+            return redirect(url_for("auth.login"))
 
-        if error is None:
-            try:
-                user = UserModel(
-                username=request.form['username'],
-                password=generate_password_hash(request.form['password'])
-                )
-                db.add(user)
-                db.commit
-                # db.execute(
-                #     "INSERT INTO user (username, password) VALUES (?, ?)",
-                #     (username, generate_password_hash(password)),
-                # )
-                # db.commit()
-            except db.IntegrityError:
-                error = f"User {username} is already registered."
-            else:
-                return redirect(url_for("auth.login"))
+        if not password:
+            flash('Password is required.')
+            return redirect(url_for("auth.login"))
 
-        flash(error)
+        user = UserModel(
+            username=request.form['username'],
+            password=generate_password_hash(request.form['password'])
+        )
+        try:
+            db_session.add(user)
+            db_session.commit()
+        except SQLAlchemyError as e:
+            flash(str(e.__dict__['orig']))
+            return redirect(url_for("auth.login"))
 
-    return render_template('auth/register.html')
+        flash('Registration successful')
+        return redirect(url_for("auth.login"))
+
+    elif request.method == 'GET':
+        return render_template('auth/register.html')
     
 @bp.route('/login', methods=('GET', 'POST'))
 def login():

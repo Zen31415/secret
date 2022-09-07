@@ -25,10 +25,13 @@ def not_found(error):
     """Handle 404 errors."""
     return "404 not found", 404
 
+db.init_app(application)
+flaskr_db.init_app(application)
 with application.app_context():
-    db.init_app(application)
+    db.create_all()
+    flaskr_db.create_all()
+
 
 if __name__ == '__main__':
 #    init_db_command()
-    db.create_all()
     application.run(port=8000, host='0.0.0.0')
