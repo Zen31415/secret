@@ -3,17 +3,19 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from flaskr.db import get_db, UserModel
+from flaskr.db import UserModel
 from flask import session
+from flask_sqlalchemy import SQLAlchemy
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+db = SQLAlchemy()
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db()
         error = None
 
         if not username:
@@ -27,8 +29,8 @@ def register():
                 username=request.form['username'],
                 password=generate_password_hash(request.form['password'])
                 )
-                session.add(user)
-                session.commit
+                db.add(user)
+                db.commit
                 # db.execute(
                 #     "INSERT INTO user (username, password) VALUES (?, ?)",
                 #     (username, generate_password_hash(password)),
@@ -75,7 +77,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = session.query(UserModel.username).first
+        g.user = UserModel.query.get(user_id).first()
         
                     #get_db().execute(
            # 'SELECT * FROM user WHERE id = ?', (user_id,)

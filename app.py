@@ -3,8 +3,7 @@ import os
 from flask import Flask, request, g
 from flaskr.auth import bp as auth_bp
 from flaskr.steno import bp as steno
-from flaskr.db import init_db_command
-from flaskr.db import init_app
+from flaskr.db import db as flaskr_db
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -16,7 +15,6 @@ application.config.from_mapping(
     SQLALCHEMY_TRACK_MODIFICATIONS=False
     #db = SQLAlchemy(application)
 )
-init_app(application)
 db = SQLAlchemy(application)
 #migrate = Migrate(application, db)
 application.register_blueprint(auth_bp)
@@ -26,6 +24,9 @@ application.register_blueprint(steno)
 def not_found(error):
     """Handle 404 errors."""
     return "404 not found", 404
+
+with application.app_context():
+    db.init_app(application)
 
 if __name__ == '__main__':
 #    init_db_command()

@@ -6,7 +6,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from flaskr.db import get_db, PostModel, UserModel
+from flaskr.db import PostModel, UserModel
 from flaskr.auth import login, login_required
 
 bp = Blueprint('steno', __name__)
