@@ -8,6 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import PostModel, UserModel
 from flaskr.auth import login, login_required
+from flaskr.db import session as db_session
 
 bp = Blueprint('steno', __name__)
 
@@ -48,6 +49,8 @@ def create():
             author_id=g.user.id,
             otp=generate_otp(8)
         )
+            db_session.add(post)
+            db_session.commit()
             # db = get_db()
             # db.execute(
             #     'INSERT INTO post (title, body, author_id, otp)'
