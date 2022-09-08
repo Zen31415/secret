@@ -34,20 +34,17 @@ class PostModel(db.Model):
     __tablename__ = 'post'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created = db.Column(db.DateTime(timezone=False), nullable=False, default=func.now())
     title = db.Column(db.String(), nullable=False)
     body = db.Column(db.Text(), nullable=False)
     readtime = db.Column(db.DateTime(timezone=False), nullable=True, default=None)
     otp = db.Column(db.String(8), nullable=True, default=None)
 
-    def __init__(self, id, author_id, created, title, body, readtime, otp):
-        self.id = id
+    def __init__(self, author_id, title, body, otp):
         self.author_id = author_id
-        self.created = created
         self.title = title
         self.body = body
-        self.readtime = readtime
         self.otp = otp
 
     def __repr__(self):

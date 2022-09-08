@@ -24,21 +24,14 @@ def index():
 @bp.route('/splash')
 @login_required
 def splash():
-    db = get_db()
-    posts = db.execute(
-        'SELECT p.title, body, created, author_id, username, otp, readtime'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' ORDER BY created DESC'
-    ).fetchall()
+    posts = PostModel.query.filter(PostModel.author_id == g.user.id)
     return render_template('steno/splash.html', posts=posts)
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
     """Create a new post for the current user."""
-    otp = 8
     if request.method == 'POST':
-        otp = generate_otp(otp)
         title = request.form['title']
         body = request.form['body']
         error = None
@@ -50,10 +43,10 @@ def create():
             flash(error)
         else:
             post = PostModel(
-            title="title",
-            body="body",
-            author_id="PostModel.author_id",
-            otp=""
+            title=request.form['title'],
+            body=request.form['body'],
+            author_id=g.user.id,
+            otp=generate_otp(8)
         )
             # db = get_db()
             # db.execute(

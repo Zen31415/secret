@@ -50,20 +50,17 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db()
         error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
-
+        user = UserModel.query.filter(UserModel.username == username).first()
+            
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
+        elif not check_password_hash(user.password, password):
             error = 'Incorrect password.'
 
         if error is None:
             session.clear()
-            session['user_id'] = user['id']
+            session['user_id'] = user.id
             return redirect(url_for("steno.splash"))
 
         flash(error)
@@ -77,12 +74,8 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = UserModel.query.get(user_id).first()
+        g.user = UserModel.query.get(user_id)
         
-                    #get_db().execute(
-           # 'SELECT * FROM user WHERE id = ?', (user_id,)
-        #).fetchone()
-
 @bp.route('/logout')
 def logout():
     session.clear()
