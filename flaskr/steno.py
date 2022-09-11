@@ -1,5 +1,6 @@
 from crypt import methods
 import functools, random, string
+from sqlite3 import SQLITE_ALTER_TABLE
 from datetime import datetime
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, abort
@@ -51,13 +52,6 @@ def create():
         )
             db_session.add(post)
             db_session.commit()
-            # db = get_db()
-            # db.execute(
-            #     'INSERT INTO post (title, body, author_id, otp)'
-            #     ' VALUES (?, ?, ?, ?)',
-            #     (title, body, g.user['id'], otp)
-            # )
-            # db.commit()
             return render_template('steno/splash.html')
 
     return render_template('steno/create.html')
@@ -69,32 +63,15 @@ def generate_otp(length):
 def updatereadtime(otp):
     """Whenever a message is read, we update its readtime."""
     readtime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    db = get_db()
-    db.execute(
-        "UPDATE post SET readtime = ? WHERE otp = ?", (readtime, otp)
-    )
-    db.commit()
+    fetchpost = PostModel.query.filter(PostModel.otp == otp).first()
+    fetchpost.readtime = readtime
+    db_session.commit()
     return(otp)
 
 def get_post(otp):
     """Gets a post by its identifying otp value."""
     updatereadtime(otp)
-    post = PostModel.query().filter(PostModel.otp == "otp").first()
-    
-##            (
-##        get_db()
-##        .execute(
-##            "SELECT p.title, body, created, author_id, username, otp, readtime"
-##            " FROM post p JOIN user u ON p.author_id = u.id"
-##            " WHERE p.otp = ?",
-##            (otp,),
-##        )
-##        .fetchone()
-##    )
-##
-##    if post is None:
-##        abort(404, f"Post id {otp} doesn't exist.")
-##
+    post = PostModel.query.filter(PostModel.otp == otp).first()
     return post
 
 @bp.route("/<string:otp>/view")

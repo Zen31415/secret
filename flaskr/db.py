@@ -48,4 +48,4 @@ class PostModel(db.Model):
         self.otp = otp
 
     def __repr__(self):
-        return f"<Post: {self.id}, Author: {self.author_id}>"
+        return f"<Post: {self.id}, Author: {self.author_id}, Created: {self.created}, Title: {self.title}, body: {self.body}, readtime: {self.readtime}, otp: {self.otp}>"
