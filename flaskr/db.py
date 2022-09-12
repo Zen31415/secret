@@ -8,13 +8,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 
-engine = create_engine(
-    'postgresql://postgres:postgres@localhost:5432/secret',
-    echo=True
-)
-Session = sessionmaker(bind=engine)
-session = Session()
-
 db = SQLAlchemy()
 class UserModel(db.Model):
     __tablename__ = 'user'

@@ -9,8 +9,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import PostModel, UserModel
 from flaskr.auth import login, login_required
-from flaskr.db import session as db_session
-
+#from flaskr.db import session as db_session
+from flask_sqlalchemy import SQLAlchemy
+db = SQLAlchemy()
 bp = Blueprint('steno', __name__)
 
 @bp.route('/')
@@ -65,7 +66,7 @@ def updatereadtime(otp):
     readtime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     fetchpost = PostModel.query.filter(PostModel.otp == otp).first()
     fetchpost.readtime = readtime
-    db_session.commit()
+    db.session.commit()
     return(otp)
 
 def get_post(otp):
@@ -112,7 +113,7 @@ def update(otp):
 def delete(otp):
     """Delete a post."""
     get_post(otp)
-    db = get_db()
-    db.execute("DELETE FROM post WHERE otp = ?", (otp,))
-    db.commit()
+    post = db.session.query(PostModel).filter(PostModel.otp == otp).first()
+    db.session.delete(post)
+    db.session.commit()
     return redirect(url_for("steno.splash"))
