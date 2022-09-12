@@ -27,7 +27,7 @@ def index():
 @bp.route('/splash')
 @login_required
 def splash():
-    posts = PostModel.query.filter(PostModel.author_id == g.user.id)
+    posts = PostModel.query.filter(PostModel.author_id == g.user.id).all()
     return render_template('steno/splash.html', posts=posts)
 
 @bp.route('/create', methods=('GET', 'POST'))

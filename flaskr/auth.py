@@ -32,8 +32,8 @@ def register():
             password=generate_password_hash(request.form['password'])
         )
         try:
-            db_session.add(user)
-            db_session.commit()
+            db.session.add(user)
+            db.session.commit()
         except SQLAlchemyError as e:
             flash(str(e.__dict__['orig']))
             return redirect(url_for("auth.login"))
