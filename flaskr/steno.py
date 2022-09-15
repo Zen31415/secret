@@ -51,8 +51,8 @@ def create():
             author_id=g.user.id,
             otp=generate_otp(8)
         )
-            db_session.add(post)
-            db_session.commit()
+            db.session.add(post)
+            db.session.commit()
             return render_template('steno/splash.html')
 
     return render_template('steno/create.html')

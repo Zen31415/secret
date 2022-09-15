@@ -15,7 +15,7 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(40), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    posts = db.relationship('posts', backref='author_id', lazy=True)
+    posts = db.relationship('PostModel', backref='post', lazy=True)
 
     def __init__(self, username, password):
         self.username = username
